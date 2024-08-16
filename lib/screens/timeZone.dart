@@ -246,16 +246,15 @@ class _TimezoneScreenState extends State<TimezoneScreen> {
       child: DropdownButtonHideUnderline(
         child: DropdownButtonFormField<String>(
           value: value,
-          hint: Row(
-            children: [
-              Text(
-                hint,
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
+          hint: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              hint,
+              style: GoogleFonts.montserrat(
+                color: Colors.white,
+                fontSize: 18,
               ),
-            ],
+            ),
           ),
           style: GoogleFonts.montserrat(
             color: Colors.white,
@@ -274,8 +273,8 @@ class _TimezoneScreenState extends State<TimezoneScreen> {
             );
           }).toList(),
           onChanged: onChanged,
-          dropdownColor: Colors.black.withOpacity(0.1),
-          alignment: Alignment.bottomCenter,
+          dropdownColor: Colors.black.withOpacity(0.8),
+          alignment: Alignment.bottomLeft,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
