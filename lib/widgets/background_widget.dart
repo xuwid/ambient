@@ -10,7 +10,7 @@ class BackgroundWidget extends StatelessWidget {
       children: [
         Positioned.fill(
           child: Image.asset(
-            'assets/background.jpg', // Replace with your image asset
+            'assets/background.png', // Replace with your image asset
             fit: BoxFit.cover,
           ),
         ),

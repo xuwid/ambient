@@ -93,25 +93,28 @@ class _NameYourAreaScreenState extends State<NameYourAreaScreen> {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
-              child: SizedBox(
-                width: 180,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  width: 180,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  onPressed: () {
-                    // Handle "Next Step" button press
-                  },
-                  child: Text(
-                    'Next Step',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      color: Colors.white,
+                    onPressed: () {
+                      // Handle "Next Step" button press
+                    },
+                    child: Text(
+                      'Next Step',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
