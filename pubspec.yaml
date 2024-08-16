@@ -38,6 +38,7 @@ dependencies:
   http: ^1.2.2
   timezone: ^0.9.4
   google_fonts: ^6.2.1
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +67,8 @@ flutter:
   assets:
     - assets/background.jpg
     - assets/background.png
+    - assets/item_background1.jpg
+    - assets/item_background2.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

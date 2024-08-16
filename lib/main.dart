@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:ambient/screens/homescreen.dart';
+import 'package:provider/provider.dart';
+import 'package:ambient/screens/homescreen.dart'; // Your HomeScreen
+import 'package:ambient/models/models.dart'; // Your state management
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => HomeState(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Timezone Selector',
+      title: 'Your App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
       home: const HomeScreen(),
     );
