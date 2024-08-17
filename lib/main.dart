@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ambient/screens/homescreen.dart'; // Your HomeScreen
-import 'package:ambient/models/models.dart'; // Your state management
+import 'package:ambient/models/state_models.dart'; // Your state management
 
 void main() {
   runApp(
@@ -21,6 +21,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const HomeScreen(),
+      initialRoute: '/homeTab',
+      routes: {
+        '/homeTab': (context) => const HomeScreen(),
+        // Other routes
+      },
     );
   }
 }

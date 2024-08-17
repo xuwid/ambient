@@ -6,9 +6,8 @@ import 'package:ambient/screens/SelectCotroller.dart'; // Import the Select Cont
 import 'package:ambient/widgets/menu_buttons.dart'; // Import your custom buttons
 import 'package:ambient/widgets/area_widget.dart'; // Import the RoofLineWidget
 import 'package:ambient/widgets/controller_widget.dart'; // Import the ControllerWidget
-import 'package:ambient/models/models.dart'; // Import the models
-import 'package:provider/provider.dart';
-import 'package:ambient/models/models.dart'; // Import state management
+import 'package:ambient/models/state_models.dart'; // Import the models
+import 'package:provider/provider.dart'; // Import state management
 
 class HomeTab extends StatelessWidget {
   const HomeTab({Key? key}) : super(key: key);
@@ -172,8 +171,9 @@ class HomeTab extends StatelessWidget {
         int index = entry.key;
         Area area = entry.value;
         return RoofLineWidget(
-          title: area.name,
-          isActive: area.isActive, // Display the active state
+          title: area.title,
+          isActive:
+              area.controller.isActive, // Check if the controller is active
           onToggle: (value) {
             homeState.toggleArea(index, value);
           },
@@ -192,7 +192,7 @@ class HomeTab extends StatelessWidget {
           title: controller.name,
           isActive: controller.isActive, // Display the active state
           onToggle: (value) {
-            homeState.toggleController(index, value);
+            homeState.toggleControllerByIndex(index, value);
           },
           index: index, // Pass index to determine background image
         );

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ambient/widgets/background_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:ambient/models/state_models.dart';
+import 'package:ambient/screens/zone_screen.dart';
 
 class NameYourAreaScreen extends StatefulWidget {
   const NameYourAreaScreen({super.key});
@@ -14,6 +17,8 @@ class _NameYourAreaScreenState extends State<NameYourAreaScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final homeState = Provider.of<HomeState>(context);
+
     return Scaffold(
       body: BackgroundWidget(
         child: Column(
@@ -107,10 +112,19 @@ class _NameYourAreaScreenState extends State<NameYourAreaScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     onPressed: () {
-                      // Handle "Next Step" button press
+                      if (_textController.text.isNotEmpty) {
+                        homeState.createArea(
+                          _textController.text,
+                        );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ZoneScreen()),
+                        );
+                      }
                     },
                     child: Text(
-                      'Next Step',
+                      'Next',
                       style: GoogleFonts.montserrat(
                         fontSize: 16,
                         color: Colors.white,

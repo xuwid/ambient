@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ambient/widgets/background_widget.dart';
-import 'package:ambient/screens/name_your_area.dart'; // Import the new screen
+import 'package:provider/provider.dart';
+import 'package:ambient/models/state_models.dart';
+import 'package:ambient/screens/name_your_area.dart';
 
 class SelectControllerScreen extends StatefulWidget {
   const SelectControllerScreen({super.key});
@@ -11,11 +13,11 @@ class SelectControllerScreen extends StatefulWidget {
 }
 
 class _SelectControllerScreenState extends State<SelectControllerScreen> {
-  final List<String> controllers = ["Main", "Pool House", "Garage"];
-  String? activeController;
-
   @override
   Widget build(BuildContext context) {
+    final homeState = Provider.of<HomeState>(context);
+    final controllers = homeState.controllers;
+
     return Scaffold(
       body: BackgroundWidget(
         child: Column(
@@ -59,11 +61,11 @@ class _SelectControllerScreenState extends State<SelectControllerScreen> {
                   final controller = controllers[index];
                   return ListTile(
                     leading: Switch(
-                      value: activeController == controller,
+                      value: controller.isActive,
                       onChanged: (value) {
-                        setState(() {
-                          activeController = value ? controller : null;
-                        });
+                        if (value) {
+                          homeState.toggleController(controller.name);
+                        }
                       },
                       inactiveTrackColor: const Color.fromARGB(255, 49, 46, 46),
                       thumbColor: MaterialStateProperty.resolveWith<Color>(
@@ -87,13 +89,13 @@ class _SelectControllerScreenState extends State<SelectControllerScreen> {
                           size: 24, color: Colors.white)), // Larger thumb size
                     ),
                     title: Text(
-                      controller,
+                      controller.name,
                       style: GoogleFonts.montserrat(
                         color: Colors.white,
                         fontSize: 18,
                       ),
                     ),
-                    tileColor: activeController == controller
+                    tileColor: controller.isActive
                         ? Colors.purple.withOpacity(0.2)
                         : Colors.black.withOpacity(0.5),
                     shape: RoundedRectangleBorder(

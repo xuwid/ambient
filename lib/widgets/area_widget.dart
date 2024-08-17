@@ -61,7 +61,7 @@ class RoofLineWidget extends StatelessWidget {
             left: containerWidth *
                 0.07, // Adjust left padding based on container width
             top: containerHeight *
-                0.3, // Adjust top padding based on container height
+                0.4, // Adjust top padding based on container height
             child: Text(
               title,
               style: TextStyle(
@@ -80,9 +80,22 @@ class RoofLineWidget extends StatelessWidget {
             child: Switch(
               value: isActive,
               onChanged: onToggle,
-              activeColor: const Color(0xFFA427CA),
-              inactiveThumbColor: Colors.white,
-              inactiveTrackColor: Colors.grey,
+              activeColor: const Color(0xFFA427CA), // Matching active color
+              inactiveThumbColor: Colors.white, // Matching thumb color
+              inactiveTrackColor: Colors.grey, // Matching track color
+              thumbIcon: MaterialStateProperty.all(
+                Icon(Icons.circle,
+                    size: 24, color: Colors.white), // Matching thumb icon
+              ),
+              trackColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return Colors.purple
+                        .withOpacity(0.5); // Matching track color when selected
+                  }
+                  return Colors.grey; // Matching track color when not selected
+                },
+              ),
             ),
           ),
         ],
