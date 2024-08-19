@@ -32,6 +32,7 @@ class HomeTab extends StatelessWidget {
               Container(
                 color: Colors.transparent,
                 child: AppBar(
+                  automaticallyImplyLeading: false,
                   title: Text(
                     'Home',
                     style: GoogleFonts.montserrat(
@@ -172,10 +173,13 @@ class HomeTab extends StatelessWidget {
         Area area = entry.value;
         return RoofLineWidget(
           title: area.title,
-          isActive:
-              area.controller.isActive, // Check if the controller is active
+          isActive: area.isActive, // Check if the area is active
           onToggle: (value) {
-            homeState.toggleArea(index, value);
+            if (value) {
+              homeState.toggleArea(index, true); // Activate this area
+            } else {
+              homeState.toggleArea(index, false); // Deactivate this area
+            }
           },
           index: index, // Pass index to determine background image
         );

@@ -63,9 +63,7 @@ class _SelectControllerScreenState extends State<SelectControllerScreen> {
                     leading: Switch(
                       value: controller.isActive,
                       onChanged: (value) {
-                        if (value) {
-                          homeState.toggleController(controller.name);
-                        }
+                        homeState.toggleController(controller.name);
                       },
                       inactiveTrackColor: const Color.fromARGB(255, 49, 46, 46),
                       thumbColor: MaterialStateProperty.resolveWith<Color>(

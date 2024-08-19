@@ -9,6 +9,7 @@ class CustomizeTab extends StatelessWidget {
     return Column(
       children: [
         AppBar(
+          automaticallyImplyLeading: false,
           title: Text(
             'Customize',
             style: GoogleFonts.montserrat(

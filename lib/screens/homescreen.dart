@@ -1,3 +1,5 @@
+import 'package:ambient/screens/area_screen.dart';
+import 'package:ambient/screens/timeZone.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:ambient/screens/customize_tab.dart';
@@ -65,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         return const CustomizeTab();
       case 3:
-        return const SettingsTab();
+        return const TimezoneScreen();
       default:
         return const HomeTab();
     }

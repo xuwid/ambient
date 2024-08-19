@@ -27,15 +27,16 @@ class Controller {
 class Area {
   final String title;
   final Controller controller;
-  final List<Zone> zones;
+  List<Zone> zones;
+  bool isActive;
 
-  // Make the title a required parameter, and controller and zones optional
   Area({
     required this.title,
     Controller? controller,
     List<Zone>? zones,
+    this.isActive = false,
   })  : controller = controller ?? Controller("Default Controller"),
-        zones = zones ?? [Zone(title: "Default Zone")];
+        zones = zones ?? [];
 }
 
 class HomeState with ChangeNotifier {
@@ -51,7 +52,14 @@ class HomeState with ChangeNotifier {
   Area? get currentArea => _currentArea;
 
   List<Area> _areas = [
-    Area(title: "Roofline", controller: Controller("Main")),
+    Area(
+        title: "Roofline",
+        controller: Controller("Main"),
+        isActive: true,
+        zones: [
+          Zone(title: "Front", ports: []),
+          Zone(title: "Back", ports: []),
+        ]),
     Area(title: "Landscape Lights", controller: Controller("Pool House")),
   ];
 
@@ -66,8 +74,10 @@ class HomeState with ChangeNotifier {
 
   // Add a Zone to the current Area
   void addZoneToCurrentArea(Zone zone) {
-    _currentArea?.zones.add(Zone(title: zone.title, ports: zone.ports));
-    notifyListeners();
+    if (_currentArea != null) {
+      _currentArea!.zones.add(Zone(title: zone.title, ports: zone.ports));
+      notifyListeners();
+    }
   }
 
   // Toggle the active state of a Controller
@@ -79,14 +89,36 @@ class HomeState with ChangeNotifier {
 
   // Toggle the active state of a Controller by index
   void toggleControllerByIndex(int index, bool isActive) {
-    _controllers[index].isActive = isActive;
-    notifyListeners();
+    if (index >= 0 && index < _controllers.length) {
+      _controllers[index].isActive = isActive;
+      notifyListeners();
+    }
   }
 
   // Toggle the active state of an Area by index
   void toggleArea(int index, bool isActive) {
-    _areas[index].controller.isActive = isActive;
-    notifyListeners();
+    if (index >= 0 && index < _areas.length) {
+      // Deactivate all other areas
+      for (var i = 0; i < _areas.length; i++) {
+        if (i != index) {
+          _areas[i].isActive = false;
+        }
+      }
+
+      // Activate the selected area
+      _areas[index].isActive = isActive;
+
+      // Optionally update the isActive status of the Controller
+      if (isActive) {
+        _areas[index].controller.isActive = true;
+        _currentArea = _areas[index];
+      } else {
+        _areas[index].controller.isActive = false;
+        _currentArea = null;
+      }
+
+      notifyListeners();
+    }
   }
 
   // Add a new Area with a list of Zones

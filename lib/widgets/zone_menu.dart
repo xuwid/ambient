@@ -15,7 +15,7 @@ class ZoneMenu extends StatefulWidget {
   final Function(int, int) onEndingLightValueChanged;
   final Function(int, bool?) onPortSelectionChanged;
   final VoidCallback onMenuToggle;
-  final VoidCallback onSaveZone; // New callback for saving the zone
+  final VoidCallback onSaveZone;
 
   const ZoneMenu({
     Key? key,
@@ -30,7 +30,7 @@ class ZoneMenu extends StatefulWidget {
     required this.onEndingLightValueChanged,
     required this.onPortSelectionChanged,
     required this.onMenuToggle,
-    required this.onSaveZone, // Initialize the new callback
+    required this.onSaveZone,
   }) : super(key: key);
 
   @override
@@ -113,7 +113,7 @@ class _ZoneMenuState extends State<ZoneMenu> {
                 children: [
                   TextField(
                     controller: zoneNameController,
-                    onChanged: _onZoneNameChanged, // Debounced update
+                    onChanged: _onZoneNameChanged,
                     style: GoogleFonts.montserrat(color: Colors.white),
                     decoration: InputDecoration(
                       hintText: "Enter Zone Name",
@@ -136,27 +136,32 @@ class _ZoneMenuState extends State<ZoneMenu> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: List.generate(4, (index) {
-                            return Row(
-                              children: [
-                                Text(
-                                  '${index + 1}',
-                                  style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    fontSize: 16,
+                            if (index < widget.portSelections.length) {
+                              return Row(
+                                children: [
+                                  Text(
+                                    '${index + 1}',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                ),
-                                Checkbox(
-                                  value: widget.portSelections[index],
-                                  onChanged: (bool? value) {
-                                    widget.onPortSelectionChanged(index, value);
-                                  },
-                                  checkColor: Colors.white,
-                                  activeColor: Colors.blue,
-                                  materialTapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                              ],
-                            );
+                                  Checkbox(
+                                    value: widget.portSelections[index],
+                                    onChanged: (bool? value) {
+                                      widget.onPortSelectionChanged(
+                                          index, value);
+                                    },
+                                    checkColor: Colors.white,
+                                    activeColor: Colors.blue,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
                           }),
                         ),
                       ),
@@ -165,20 +170,27 @@ class _ZoneMenuState extends State<ZoneMenu> {
                   const SizedBox(height: 20),
                   Column(
                     children: List.generate(4, (index) {
-                      if (widget.portSelections[index]) {
+                      if (index < widget.portSelections.length &&
+                          widget.portSelections[index]) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             StartingLightWidget(
                               title: "Starting Light",
-                              initialValue: widget.startingLightValues[index],
+                              initialValue:
+                                  index < widget.startingLightValues.length
+                                      ? widget.startingLightValues[index]
+                                      : 0,
                               onValueChanged: (newValue) => widget
                                   .onStartingLightValueChanged(index, newValue),
                             ),
                             const SizedBox(height: 10),
                             StartingLightWidget(
                               title: "Ending Light",
-                              initialValue: widget.endingLightValues[index],
+                              initialValue:
+                                  index < widget.endingLightValues.length
+                                      ? widget.endingLightValues[index]
+                                      : 0,
                               onValueChanged: (newValue) => widget
                                   .onEndingLightValueChanged(index, newValue),
                             ),
