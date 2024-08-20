@@ -138,7 +138,12 @@ class HomeTab extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const SelectControllerScreen(),
+                          builder: (context) {
+                            HomeState homeState =
+                                Provider.of<HomeState>(context, listen: false);
+                            homeState.createArea('');
+                            return const SelectControllerScreen();
+                          },
                         ),
                       );
                     }),

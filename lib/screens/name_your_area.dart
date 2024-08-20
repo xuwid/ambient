@@ -113,9 +113,7 @@ class _NameYourAreaScreenState extends State<NameYourAreaScreen> {
                     ),
                     onPressed: () {
                       if (_textController.text.isNotEmpty) {
-                        homeState.createArea(
-                          _textController.text,
-                        );
+                        homeState.addTitletoArea(_textController.text);
                         Navigator.push(
                           context,
                           MaterialPageRoute(

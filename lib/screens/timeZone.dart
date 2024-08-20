@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart'; // Make sure to add provider package
+import 'package:ambient/models/state_models.dart';
 
 class TimezoneScreen extends StatefulWidget {
   const TimezoneScreen({super.key});
@@ -12,6 +14,7 @@ class TimezoneScreen extends StatefulWidget {
 }
 
 class _TimezoneScreenState extends State<TimezoneScreen> {
+  late HomeState homeState;
   String? selectedTimezone;
   String? selectedLocation;
   List<String> timezones = [];
@@ -22,6 +25,10 @@ class _TimezoneScreenState extends State<TimezoneScreen> {
   @override
   void initState() {
     super.initState();
+    homeState = Provider.of<HomeState>(context,
+        listen: false); // Get instance of HomeState
+    selectedTimezone = homeState.selectedTimezone;
+    selectedLocation = homeState.selectedLocation;
     tz_data.initializeTimeZones();
     _fetchTimezones();
   }
@@ -48,6 +55,13 @@ class _TimezoneScreenState extends State<TimezoneScreen> {
             }
             locationsMap[region]!.add(location);
           }
+        }
+        // Ensure selected timezone and location are retained
+        if (selectedTimezone != null) {
+          _fetchLocations(selectedTimezone!);
+        }
+        if (selectedLocation != null) {
+          _fetchCurrentTime('$selectedTimezone/$selectedLocation');
         }
       });
     } else {
@@ -177,6 +191,7 @@ class _TimezoneScreenState extends State<TimezoneScreen> {
                               });
                               if (newValue != null) {
                                 _fetchLocations(newValue);
+                                homeState.setSelectedTimezone(newValue);
                               }
                             },
                           ),
@@ -207,19 +222,20 @@ class _TimezoneScreenState extends State<TimezoneScreen> {
                               if (newValue != null) {
                                 _fetchCurrentTime(
                                     '$selectedTimezone/$newValue');
+                                homeState.setSelectedLocation(newValue);
                               }
                             },
                           ),
                         ),
                         const SizedBox(height: 16),
-                        if (currentTime != null)
-                          Text(
-                            'Current Time: $currentTime',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
-                          ),
+                        //if (currentTime != null)
+                        // Text(
+                        //        'Current Time: $currentTime',
+                        //   style: GoogleFonts.montserrat(
+                        //     fontSize: 16,
+                        //     color: Colors.white,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -256,34 +272,21 @@ class _TimezoneScreenState extends State<TimezoneScreen> {
               ),
             ),
           ),
-          style: GoogleFonts.montserrat(
-            color: Colors.white,
-          ),
-          isExpanded: true,
-          items: items.map((String value) {
+          icon: Icon(Icons.arrow_drop_down, color: Colors.white),
+          dropdownColor: Colors.black.withOpacity(0.8),
+          items: items.map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Text(
                 value,
-                style: GoogleFonts.montserrat(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
+                style: GoogleFonts.montserrat(color: Colors.white),
               ),
             );
           }).toList(),
           onChanged: onChanged,
-          dropdownColor: Colors.black.withOpacity(0.8),
-          alignment: Alignment.bottomLeft,
           decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            filled: true,
-            fillColor: Colors.black.withOpacity(0.5),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
           ),
         ),
       ),

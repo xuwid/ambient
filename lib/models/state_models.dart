@@ -25,17 +25,17 @@ class Controller {
 }
 
 class Area {
-  final String title;
-  final Controller controller;
+  late String title;
+  List<Controller> controller;
   List<Zone> zones;
   bool isActive;
 
   Area({
     required this.title,
-    Controller? controller,
+    List<Controller>? controller,
     List<Zone>? zones,
     this.isActive = false,
-  })  : controller = controller ?? Controller("Default Controller"),
+  })  : controller = controller ?? [],
         zones = zones ?? [];
 }
 
@@ -54,21 +54,62 @@ class HomeState with ChangeNotifier {
   List<Area> _areas = [
     Area(
         title: "Roofline",
-        controller: Controller("Main"),
+        controller: [Controller("Main")],
         isActive: true,
         zones: [
           Zone(title: "Front", ports: []),
           Zone(title: "Back", ports: []),
         ]),
-    Area(title: "Landscape Lights", controller: Controller("Pool House")),
+    Area(title: "Landscape Lights", controller: [Controller("Pool House")]),
   ];
 
+  String? _selectedTimezone;
+  String? _selectedLocation;
+
+  String? get selectedTimezone => _selectedTimezone;
+  String? get selectedLocation => _selectedLocation;
+
+  void setSelectedTimezone(String? timezone) {
+    _selectedTimezone = timezone;
+    notifyListeners();
+  }
+
+  void setSelectedLocation(String? location) {
+    _selectedLocation = location;
+    notifyListeners();
+  }
+
   List<Area> get areas => _areas;
+  void addControllertoArea(Controller controller) {
+    if (_currentArea != null) {
+      _currentArea!.controller.add(controller);
+      notifyListeners();
+    }
+  }
+
+  void removeControllerfromArea(Controller controller) {
+    if (_currentArea != null) {
+      _currentArea!.controller.remove(controller);
+      notifyListeners();
+    }
+  }
 
   // Create a new Area and assign it to _currentArea
-  void createArea(String title, {Controller? controller, List<Zone>? zones}) {
+  void createArea(String title,
+      {List<Controller>? controller, List<Zone>? zones}) {
     _currentArea = Area(title: title, controller: controller, zones: zones);
     _areas.add(_currentArea!);
+    if (controller != null) {
+      print('Adding controllers to ${_currentArea!.title}');
+      print('Controllers: ${controller.map((c) => c.name).toList()}');
+    }
+    notifyListeners();
+  }
+
+  void addTitletoArea(String title) {
+    if (_currentArea != null) {
+      _currentArea!.title = title;
+    }
     notifyListeners();
   }
 
@@ -98,22 +139,13 @@ class HomeState with ChangeNotifier {
   // Toggle the active state of an Area by index
   void toggleArea(int index, bool isActive) {
     if (index >= 0 && index < _areas.length) {
-      // Deactivate all other areas
-      for (var i = 0; i < _areas.length; i++) {
-        if (i != index) {
-          _areas[i].isActive = false;
-        }
-      }
-
       // Activate the selected area
       _areas[index].isActive = isActive;
 
       // Optionally update the isActive status of the Controller
       if (isActive) {
-        _areas[index].controller.isActive = true;
         _currentArea = _areas[index];
       } else {
-        _areas[index].controller.isActive = false;
         _currentArea = null;
       }
 
@@ -122,9 +154,20 @@ class HomeState with ChangeNotifier {
   }
 
   // Add a new Area with a list of Zones
-  void addArea(String title, {Controller? controller, List<Zone>? zones}) {
+  void addArea(String title,
+      {List<Controller>? controller, List<Zone>? zones}) {
     _currentArea = Area(title: title, controller: controller, zones: zones);
     _areas.add(_currentArea!);
     notifyListeners();
+  }
+
+  void addControllersToCurrentArea(List<Controller> controllers) {
+    if (_currentArea != null) {
+      _currentArea!.controller.addAll(controllers);
+      print('Adding controllers to ${_currentArea!.title}');
+      print('Controllers: ${controllers.map((c) => c.name).toList()}');
+      notifyListeners();
+    }
+    print('Current Area is null');
   }
 }

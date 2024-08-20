@@ -13,11 +13,21 @@ class SelectControllerScreen extends StatefulWidget {
 }
 
 class _SelectControllerScreenState extends State<SelectControllerScreen> {
+  late List<Controller> _localControllers;
+
+  @override
+  void initState() {
+    super.initState();
+    final homeState = Provider.of<HomeState>(context, listen: false);
+
+    // Initialize local controllers with the state from HomeState
+    _localControllers = homeState.controllers.map((controller) {
+      return Controller(controller.name, isActive: false);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final homeState = Provider.of<HomeState>(context);
-    final controllers = homeState.controllers;
-
     return Scaffold(
       body: BackgroundWidget(
         child: Column(
@@ -56,14 +66,28 @@ class _SelectControllerScreenState extends State<SelectControllerScreen> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: controllers.length,
+                itemCount: _localControllers.length,
                 itemBuilder: (context, index) {
-                  final controller = controllers[index];
+                  final controller = _localControllers[index];
                   return ListTile(
                     leading: Switch(
                       value: controller.isActive,
                       onChanged: (value) {
-                        homeState.toggleController(controller.name);
+                        if (value == true) {
+                          setState(() {
+                            controller.isActive = value;
+                          });
+                          final homeState =
+                              Provider.of<HomeState>(context, listen: false);
+                          homeState.addControllertoArea(controller);
+                        } else {
+                          setState(() {
+                            final homeState =
+                                Provider.of<HomeState>(context, listen: false);
+                            homeState.removeControllerfromArea(controller);
+                            controller.isActive = value;
+                          });
+                        }
                       },
                       inactiveTrackColor: const Color.fromARGB(255, 49, 46, 46),
                       thumbColor: MaterialStateProperty.resolveWith<Color>(
