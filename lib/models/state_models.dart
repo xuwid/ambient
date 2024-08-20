@@ -109,6 +109,7 @@ class HomeState with ChangeNotifier {
   void addTitletoArea(String title) {
     if (_currentArea != null) {
       _currentArea!.title = title;
+      print(currentArea!.controller.map((c) => c.name).toList());
     }
     notifyListeners();
   }

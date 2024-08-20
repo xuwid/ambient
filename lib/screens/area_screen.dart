@@ -160,7 +160,7 @@ class _AreaScreenState extends State<AreaScreen> {
               flexibleSpace: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
                 margin: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(16),
                     bottomRight: Radius.circular(16),

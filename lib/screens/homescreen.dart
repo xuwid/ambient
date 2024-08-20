@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         return const CustomizeTab();
       case 3:
-        return const TimezoneScreen();
+        return const AreaScreen();
       default:
         return const HomeTab();
     }

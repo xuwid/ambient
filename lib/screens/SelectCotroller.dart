@@ -14,6 +14,8 @@ class SelectControllerScreen extends StatefulWidget {
 
 class _SelectControllerScreenState extends State<SelectControllerScreen> {
   late List<Controller> _localControllers;
+  final int _maxSelectedControllers = 5;
+  List<Controller> _selectedControllers = [];
 
   @override
   void initState() {
@@ -73,21 +75,37 @@ class _SelectControllerScreenState extends State<SelectControllerScreen> {
                     leading: Switch(
                       value: controller.isActive,
                       onChanged: (value) {
-                        if (value == true) {
-                          setState(() {
-                            controller.isActive = value;
-                          });
+                        setState(() {
+                          if (value) {
+                            if (_selectedControllers.length >=
+                                _maxSelectedControllers) {
+                              // Deactivate the oldest selected controller
+                              final oldestController =
+                                  _selectedControllers.removeAt(0);
+                              oldestController.isActive = false;
+                              // Optionally update the HomeState
+                              final homeState = Provider.of<HomeState>(context,
+                                  listen: false);
+                              homeState
+                                  .removeControllerfromArea(oldestController);
+                            }
+                            // Activate the new controller
+                            controller.isActive = true;
+                            _selectedControllers.add(controller);
+                          } else {
+                            // Deactivate the controller
+                            controller.isActive = false;
+                            _selectedControllers.remove(controller);
+                          }
+                          // Optionally update the HomeState
                           final homeState =
                               Provider.of<HomeState>(context, listen: false);
-                          homeState.addControllertoArea(controller);
-                        } else {
-                          setState(() {
-                            final homeState =
-                                Provider.of<HomeState>(context, listen: false);
+                          if (controller.isActive) {
+                            homeState.addControllertoArea(controller);
+                          } else {
                             homeState.removeControllerfromArea(controller);
-                            controller.isActive = value;
-                          });
-                        }
+                          }
+                        });
                       },
                       inactiveTrackColor: const Color.fromARGB(255, 49, 46, 46),
                       thumbColor: MaterialStateProperty.resolveWith<Color>(
