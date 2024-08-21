@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ambient/models/state_models.dart';
-import 'package:ambient/widgets/zone_menu.dart'; // Import the ZoneMenu widget
+import 'package:ambient/widgets/edit_zone_menu.dart'; // Import the EditZone widget
 import 'package:google_fonts/google_fonts.dart';
 
 class BackgroundWidget extends StatelessWidget {
@@ -216,8 +216,9 @@ class _AreaScreenState extends State<AreaScreen> {
                         final zoneMenu = entry.value;
                         return Column(
                           children: [
-                            ZoneMenu(
-                              isZoneMenuVisible: zoneMenu.isZoneMenuVisible,
+                            EditZoneMenu(
+                              //isZoneMenuVisible: zoneMenu.isZoneMenuVisible,
+                              isEditMenuVisible: zoneMenu.isZoneMenuVisible,
                               zoneName: zoneMenu.zoneName,
                               buttonWidth: buttonWidth,
                               portSelections: zoneMenu.portSelections,

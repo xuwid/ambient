@@ -1,3 +1,7 @@
+//import 'package:ambient/screens/Signup.dart';
+
+import 'package:ambient/screens/Login.dart';
+import 'package:ambient/screens/Signup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ambient/screens/homescreen.dart'; // Your HomeScreen
@@ -23,7 +27,7 @@ class MyApp extends StatelessWidget {
       home: const HomeScreen(),
       initialRoute: '/homeTab',
       routes: {
-        '/homeTab': (context) => const HomeScreen(),
+        '/homeTab': (context) => LoginPage(),
         // Other routes
       },
     );

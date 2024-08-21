@@ -30,6 +30,7 @@ class _SelectControllerScreenState extends State<SelectControllerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final homeState = Provider.of<HomeState>(context, listen: false);
     return Scaffold(
       body: BackgroundWidget(
         child: Column(
@@ -84,8 +85,8 @@ class _SelectControllerScreenState extends State<SelectControllerScreen> {
                                   _selectedControllers.removeAt(0);
                               oldestController.isActive = false;
                               // Optionally update the HomeState
-                              final homeState = Provider.of<HomeState>(context,
-                                  listen: false);
+                              //   final homeState = Provider.of<HomeState>(context,
+                              //     listen: false);
                               homeState
                                   .removeControllerfromArea(oldestController);
                             }
@@ -97,9 +98,7 @@ class _SelectControllerScreenState extends State<SelectControllerScreen> {
                             controller.isActive = false;
                             _selectedControllers.remove(controller);
                           }
-                          // Optionally update the HomeState
-                          final homeState =
-                              Provider.of<HomeState>(context, listen: false);
+
                           if (controller.isActive) {
                             homeState.addControllertoArea(controller);
                           } else {
