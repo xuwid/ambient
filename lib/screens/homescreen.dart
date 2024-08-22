@@ -1,6 +1,7 @@
 import 'package:ambient/screens/area_screen.dart';
 import 'package:ambient/screens/setting.dart';
 import 'package:ambient/screens/timeZone.dart';
+import 'package:ambient/screens/setting_tab.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:ambient/screens/customize_tab.dart';

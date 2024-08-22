@@ -151,6 +151,7 @@ class _AreaScreenState extends State<AreaScreen> {
       body: BackgroundWidget(
         child: Column(
           children: [
+            const SizedBox(height: 50),
             // AppBar with the same background image as the body
             AppBar(
               automaticallyImplyLeading: false,

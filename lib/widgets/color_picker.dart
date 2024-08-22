@@ -10,7 +10,7 @@ class ColorPickerApp extends StatelessWidget {
       home: Scaffold(
         backgroundColor: Colors.black,
         body: Center(
-          child: ColorPicker(),
+          child: ColorPicker(size: 225),
         ),
       ),
     );
@@ -18,12 +18,19 @@ class ColorPickerApp extends StatelessWidget {
 }
 
 class ColorPicker extends StatefulWidget {
+  final double size;
+
+  ColorPicker({required this.size});
+
   @override
   _ColorPickerState createState() => _ColorPickerState();
 }
 
 class _ColorPickerState extends State<ColorPicker> {
   Color selectedColor = Colors.red;
+  double brightness = 1.0;
+  double saturation = 1.0;
+  double hue = 0.0; // Store the hue value separately
   Offset selectorPosition = Offset.zero;
 
   @override
@@ -33,12 +40,14 @@ class _ColorPickerState extends State<ColorPicker> {
   }
 
   void _updateSelectorPosition(double angle) {
-    // Size is now dynamically calculated
-    final ringRadius =
-        (minSize() / 2) - 16.0; // Adjust for the ring's edge and width
+    final ringWidth = 18.0;
+    final ringRadius = (widget.size / 2) - 10.0;
+    final middleRingRadius =
+        ringRadius - ringWidth / 2; // Position in the middle of the ring
+
     selectorPosition = Offset(
-      minSize() / 2 + ringRadius * cos(angle),
-      minSize() / 2 + ringRadius * sin(angle),
+      widget.size / 2 + middleRingRadius * cos(angle),
+      widget.size / 2 + middleRingRadius * sin(angle),
     );
   }
 
@@ -46,47 +55,202 @@ class _ColorPickerState extends State<ColorPicker> {
     final center = Offset(size.width / 2, size.height / 2);
     final direction = position - center;
     final angle = atan2(direction.dy, direction.dx);
-    final hue = (angle * 180 / pi + 360) % 360;
+    hue = (angle * 180 / pi + 360) % 360; // Update the stored hue
 
     setState(() {
-      selectedColor = HSVColor.fromAHSV(1, hue, 1, 1).toColor();
+      selectedColor =
+          HSVColor.fromAHSV(1, hue, saturation, brightness).toColor();
       _updateSelectorPosition(angle);
+    });
+  }
+
+  void _updateBrightness(double value) {
+    setState(() {
+      brightness = value;
+
+      // Update the selected color while preserving hue and saturation
+      selectedColor = HSVColor.fromAHSV(
+        1,
+        hue, // Use the stored hue value
+        saturation,
+        brightness,
+      ).toColor();
+    });
+  }
+
+  void _updateSaturation(double value) {
+    setState(() {
+      saturation = value;
+
+      // Update the selected color while preserving hue and brightness
+      selectedColor = HSVColor.fromAHSV(
+        1,
+        hue, // Use the stored hue value
+        saturation,
+        brightness,
+      ).toColor();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanUpdate: (details) {
-        final localPosition = (context.findRenderObject() as RenderBox)
-            .globalToLocal(details.globalPosition);
-        _updateColor(localPosition, Size(minSize(), minSize()));
-      },
+    return Column(
+      mainAxisSize: MainAxisSize.min, // Ensure the column takes minimum space
+      children: [
+        CurvedSlider(
+          startAngle: -pi,
+          sweepAngle: pi,
+          size: widget.size,
+          value: brightness,
+          onChanged: _updateBrightness,
+          label: 'Brightness',
+        ),
+        GestureDetector(
+          onPanUpdate: (details) {
+            final localPosition = (context.findRenderObject() as RenderBox)
+                .globalToLocal(details.globalPosition);
+            _updateColor(localPosition, Size(widget.size, widget.size));
+          },
+          child: CustomPaint(
+            size: Size(widget.size, widget.size),
+            painter:
+                ColorWheelPainter(selectedColor, selectorPosition, widget.size),
+          ),
+        ),
+        CurvedSlider(
+          startAngle: pi,
+          sweepAngle: -pi,
+          size: widget.size,
+          value: saturation,
+          onChanged: _updateSaturation,
+          label: 'Saturation',
+        ),
+      ],
+    );
+  }
+}
+
+class CurvedSlider extends StatelessWidget {
+  final double size;
+  final double value;
+  final ValueChanged<double> onChanged;
+  final String label;
+  final double startAngle; // Added
+  final double sweepAngle; // Added
+
+  CurvedSlider({
+    required this.size,
+    required this.value,
+    required this.onChanged,
+    required this.label,
+    required this.startAngle, // Updated
+    required this.sweepAngle, // Updated
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size / 8, // Further reduced height to bring sliders closer
       child: CustomPaint(
-        size: Size(minSize(), minSize()),
-        painter: ColorWheelPainter(selectedColor, selectorPosition),
+        painter: CurvedSliderPainter(value, label, startAngle, sweepAngle),
+        child: GestureDetector(
+          onPanUpdate: (details) {
+            final localPosition = (context.findRenderObject() as RenderBox)
+                .globalToLocal(details.globalPosition);
+            final x = localPosition.dx / size;
+            final newValue = x.clamp(0.0, 1.0);
+            onChanged(newValue);
+          },
+        ),
       ),
     );
   }
+}
 
-  double minSize() {
-    return 300.0; // You can adjust this value based on your layout needs
+class CurvedSliderPainter extends CustomPainter {
+  final double value;
+  final String label;
+  final double startAngle; // Added
+  final double sweepAngle; // Added
+
+  CurvedSliderPainter(this.value, this.label, this.startAngle, this.sweepAngle);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+
+    final trackPaint = Paint()
+      ..color = Colors.grey.shade800
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4.0; // Reduced stroke width for the slider track
+
+    final selectorRadius = 6.0; // Size of the selector
+
+    final path = Path()..arcTo(rect, startAngle, sweepAngle, false); // Updated
+
+    canvas.drawPath(path, trackPaint);
+
+    // Calculate the selector position
+    final selectorAngle = startAngle + sweepAngle * value;
+    final selectorPosition = Offset(
+      size.width / 2 + (size.width / 2) * cos(selectorAngle),
+      size.height / 2 + (size.height / 2) * sin(selectorAngle),
+    );
+
+    final selectorPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(selectorPosition, selectorRadius, selectorPaint);
+
+    // Draw the label
+    final textSpan = TextSpan(
+      text: label,
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout(
+      minWidth: 0,
+      maxWidth: size.width,
+    );
+
+    final textOffset = Offset(
+      size.width / 2 - textPainter.width / 2,
+      size.height - textPainter.height - 5, // Adjust for placement
+    );
+
+    textPainter.paint(canvas, textOffset);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
 
 class ColorWheelPainter extends CustomPainter {
   final Color selectedColor;
   final Offset selectorPosition;
+  final double size;
 
-  ColorWheelPainter(this.selectedColor, this.selectorPosition);
+  ColorWheelPainter(this.selectedColor, this.selectorPosition, this.size);
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
 
-    // Draw the RGB ring
-    final ringWidth = 16.0;
+    final ringWidth = 18.0;
     final ringRadius = radius - ringWidth / 2 - 10;
 
     final ringPaint = Paint()
@@ -99,21 +263,13 @@ class ColorWheelPainter extends CustomPainter {
           Colors.blue,
           Colors.red,
         ],
-        stops: [
-          0.0,
-          0.17,
-          0.33,
-          0.5,
-          0.67,
-          1.0
-        ], // Ensure gradient colors are evenly spread
+        stops: [0.0, 0.17, 0.33, 0.5, 0.67, 1.0],
       ).createShader(Rect.fromCircle(center: center, radius: ringRadius))
       ..style = PaintingStyle.stroke
       ..strokeWidth = ringWidth;
 
     canvas.drawCircle(center, ringRadius, ringPaint);
 
-    // Draw the glowing inner circle with the selected color
     final innerCircleRadius =
         ringRadius - ringWidth / 2 - 20; // Adjust as needed
     final innerCirclePaint = Paint()
@@ -123,9 +279,8 @@ class ColorWheelPainter extends CustomPainter {
 
     canvas.drawCircle(center, innerCircleRadius, innerCirclePaint);
 
-    // Draw the selector with the selected color and a white border
     final selectorRadius = 8.0; // Adjust the size of the selector
-    final borderWidth = 1.5; // Width of the border
+    final borderWidth = 1.25; // Width of the border
 
     final selectorPaint = Paint()
       ..color = selectedColor.withOpacity(0.6) // Slightly transparent selector
