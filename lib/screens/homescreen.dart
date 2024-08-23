@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return const HomeTab();
       case 1:
-        return const ScenesTab();
+        return Roofline();
       case 2:
         return const CustomizeTab();
       case 3:

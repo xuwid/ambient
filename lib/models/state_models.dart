@@ -68,6 +68,13 @@ class HomeState with ChangeNotifier {
 
   String? get selectedTimezone => _selectedTimezone;
   String? get selectedLocation => _selectedLocation;
+  void removeCurrentArea() {
+    if (_currentArea != null) {
+      _areas.remove(_currentArea);
+      _currentArea = null;
+      notifyListeners();
+    }
+  }
 
   void setSelectedTimezone(String? timezone) {
     _selectedTimezone = timezone;

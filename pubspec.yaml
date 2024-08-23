@@ -40,8 +40,14 @@ dependencies:
   google_fonts: ^6.2.1
   provider: ^6.1.2
   flex_color_picker: ^3.5.1
+  permission_handler: ^11.3.1
+  wifi_iot: ^0.3.19
+  firebase_auth: ^4.16.0
+  firebase_core: ^2.24.2
+  cloud_firestore: ^4.14.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.10.0
   flutter_test:
     sdk: flutter
 
@@ -51,6 +57,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+flutter_icons:
+    android: true
+    ios: true
+    image_path: "assets/logo.jpg" # Replace with the path to your logo
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -65,7 +76,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   
+    
+
+  
   assets:
+    - assets/splash.png
     - assets/background.jpg
     - assets/background.png
     - assets/item_background1.jpg

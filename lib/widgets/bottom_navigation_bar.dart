@@ -65,8 +65,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
             decoration: const BoxDecoration(
               color: Colors.purple,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(0),
-                topRight: Radius.circular(0),
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
               ),
             ),
           ),

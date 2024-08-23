@@ -53,6 +53,7 @@ class _SelectControllerScreenState extends State<SelectControllerScreen> {
                     size: 18,
                   ),
                   onPressed: () {
+                    homeState.removeCurrentArea();
                     Navigator.pop(context);
                   },
                 ),

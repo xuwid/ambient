@@ -3,26 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:ambient/models/state_models.dart';
 import 'package:ambient/widgets/edit_zone_menu.dart'; // Import the EditZone widget
 import 'package:google_fonts/google_fonts.dart';
-
-class BackgroundWidget extends StatelessWidget {
-  final Widget child;
-  const BackgroundWidget({super.key, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: Image.asset(
-            'assets/background.png', // Replace with your image asset
-            fit: BoxFit.cover,
-          ),
-        ),
-        child,
-      ],
-    );
-  }
-}
+import 'package:ambient/widgets/background_widget.dart';
 
 class AreaScreen extends StatefulWidget {
   const AreaScreen({super.key});
@@ -149,109 +130,114 @@ class _AreaScreenState extends State<AreaScreen> {
 
     return Scaffold(
       body: BackgroundWidget(
-        child: Column(
-          children: [
-            const SizedBox(height: 50),
-            // AppBar with the same background image as the body
-            AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              toolbarHeight: 80, // Increase height for the AppBar
-              flexibleSpace: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                margin: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(16),
-                    bottomRight: Radius.circular(16),
-                  ),
-                  border: const Border(
-                    bottom: BorderSide(
-                      color: Colors.grey, // Color of the bottom border
-                      width: 0.5, // Width of the bottom border
+        child: SafeArea(
+          child: Column(
+            children: [
+              // const SizedBox(height: 50),
+              // AppBar with the same background image as the body
+              AppBar(
+                automaticallyImplyLeading: false,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                toolbarHeight: 80, // Increase height for the AppBar
+                flexibleSpace: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  margin: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color:
+                        Colors.black.withOpacity(0.0), // Transparent background
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
                     ),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back,
-                          color: Colors
-                              .white), // Change icon color to black for better contrast
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    const Icon(
-                      Icons.gamepad,
-                      color: Colors
-                          .white, // Change icon color to black for better contrast
-                      size: 30,
-                    ),
-                    const SizedBox(width: 3),
-                    Expanded(
-                      child: Text(
-                        'Zone Setup',
-                        style: GoogleFonts.montserrat(
-                          color: Colors
-                              .white, // Change text color to black for better contrast
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    border: const Border(
+                      bottom: BorderSide(
+                        color: Colors.grey, // Color of the bottom border
+                        width: 0.5, // Width of the bottom border
                       ),
                     ),
-                  ],
-                ),
-              ),
-              centerTitle: true,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
+                  ),
+                  child: Row(
                     children: [
-                      ...zoneMenus.entries.map((entry) {
-                        final index = entry.key;
-                        final zoneMenu = entry.value;
-                        return Column(
-                          children: [
-                            EditZoneMenu(
-                              //isZoneMenuVisible: zoneMenu.isZoneMenuVisible,
-                              isEditMenuVisible: zoneMenu.isZoneMenuVisible,
-                              zoneName: zoneMenu.zoneName,
-                              buttonWidth: buttonWidth,
-                              portSelections: zoneMenu.portSelections,
-                              startingLightValues: zoneMenu.startingLightValues,
-                              endingLightValues: zoneMenu.endingLightValues,
-                              changeZoneName: (newName) =>
-                                  changeZoneName(index, newName),
-                              onStartingLightValueChanged:
-                                  (portIndex, newValue) =>
-                                      onStartingLightValueChanged(
-                                          index, portIndex, newValue),
-                              onEndingLightValueChanged:
-                                  (portIndex, newValue) =>
-                                      onEndingLightValueChanged(
-                                          index, portIndex, newValue),
-                              onPortSelectionChanged: (portIndex, value) =>
-                                  onPortSelectionChanged(
-                                      index, portIndex, value),
-                              onMenuToggle: () => toggleZoneMenu(index),
-                              onSaveZone: () => saveZone(context, index),
-                            ),
-                            const SizedBox(height: 20),
-                          ],
-                        );
-                      }).toList(),
-                      const SizedBox(height: 20),
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back_ios,
+                            color: Colors
+                                .grey), // Change icon color to black for better contrast
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      const Icon(
+                        Icons.gamepad,
+                        color: Colors
+                            .white, // Change icon color to black for better contrast
+                        size: 30,
+                      ),
+                      const SizedBox(width: 3),
+                      Expanded(
+                        child: Text(
+                          'Zone Setup',
+                          style: GoogleFonts.montserrat(
+                            color: Colors
+                                .white, // Change text color to black for better contrast
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
+                centerTitle: true,
               ),
-            ),
-          ],
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        ...zoneMenus.entries.map((entry) {
+                          final index = entry.key;
+                          final zoneMenu = entry.value;
+                          return Column(
+                            children: [
+                              EditZoneMenu(
+                                //isZoneMenuVisible: zoneMenu.isZoneMenuVisible,
+                                isEditMenuVisible: zoneMenu.isZoneMenuVisible,
+                                zoneName: zoneMenu.zoneName,
+                                buttonWidth: buttonWidth,
+                                portSelections: zoneMenu.portSelections,
+                                startingLightValues:
+                                    zoneMenu.startingLightValues,
+                                endingLightValues: zoneMenu.endingLightValues,
+                                changeZoneName: (newName) =>
+                                    changeZoneName(index, newName),
+                                onStartingLightValueChanged:
+                                    (portIndex, newValue) =>
+                                        onStartingLightValueChanged(
+                                            index, portIndex, newValue),
+                                onEndingLightValueChanged:
+                                    (portIndex, newValue) =>
+                                        onEndingLightValueChanged(
+                                            index, portIndex, newValue),
+                                onPortSelectionChanged: (portIndex, value) =>
+                                    onPortSelectionChanged(
+                                        index, portIndex, value),
+                                onMenuToggle: () => toggleZoneMenu(index),
+                                onSaveZone: () => saveZone(context, index),
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          );
+                        }).toList(),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

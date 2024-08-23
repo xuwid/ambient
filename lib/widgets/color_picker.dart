@@ -10,8 +10,8 @@ class ColorPickerApp extends StatelessWidget {
       home: Scaffold(
         backgroundColor: Colors.black,
         body: Center(
-          child: ColorPicker(size: 225),
-        ),
+            //    child: ColorPicker(size: 225),
+            ),
       ),
     );
   }
@@ -19,31 +19,41 @@ class ColorPickerApp extends StatelessWidget {
 
 class ColorPicker extends StatefulWidget {
   final double size;
+  final Color initialColor;
+  final ValueChanged<Color> onColorChanged;
 
-  ColorPicker({required this.size});
+  ColorPicker({
+    required this.size,
+    required this.initialColor,
+    required this.onColorChanged,
+  });
 
   @override
   _ColorPickerState createState() => _ColorPickerState();
 }
 
 class _ColorPickerState extends State<ColorPicker> {
-  Color selectedColor = Colors.red;
+  late Color selectedColor;
   double brightness = 1.0;
   double saturation = 1.0;
-  double hue = 0.0; // Store the hue value separately
+  double hue = 0.0;
   Offset selectorPosition = Offset.zero;
 
   @override
   void initState() {
     super.initState();
-    _updateSelectorPosition(0.0); // Initial angle set to 0 (Red)
+    selectedColor = widget.initialColor;
+    final hsvColor = HSVColor.fromColor(selectedColor);
+    hue = hsvColor.hue;
+    saturation = hsvColor.saturation;
+    brightness = hsvColor.value;
+    _updateSelectorPosition(hue * pi / 180);
   }
 
   void _updateSelectorPosition(double angle) {
     final ringWidth = 18.0;
     final ringRadius = (widget.size / 2) - 10.0;
-    final middleRingRadius =
-        ringRadius - ringWidth / 2; // Position in the middle of the ring
+    final middleRingRadius = ringRadius - ringWidth / 2;
 
     selectorPosition = Offset(
       widget.size / 2 + middleRingRadius * cos(angle),
@@ -55,11 +65,13 @@ class _ColorPickerState extends State<ColorPicker> {
     final center = Offset(size.width / 2, size.height / 2);
     final direction = position - center;
     final angle = atan2(direction.dy, direction.dx);
-    hue = (angle * 180 / pi + 360) % 360; // Update the stored hue
+    hue = (angle * 180 / pi + 360) % 360;
 
     setState(() {
       selectedColor =
           HSVColor.fromAHSV(1, hue, saturation, brightness).toColor();
+      widget.onColorChanged(
+          selectedColor); // Notify the parent of the color change
       _updateSelectorPosition(angle);
     });
   }
@@ -67,35 +79,27 @@ class _ColorPickerState extends State<ColorPicker> {
   void _updateBrightness(double value) {
     setState(() {
       brightness = value;
-
-      // Update the selected color while preserving hue and saturation
-      selectedColor = HSVColor.fromAHSV(
-        1,
-        hue, // Use the stored hue value
-        saturation,
-        brightness,
-      ).toColor();
+      selectedColor =
+          HSVColor.fromAHSV(1, hue, saturation, brightness).toColor();
+      widget.onColorChanged(
+          selectedColor); // Notify the parent of the color change
     });
   }
 
   void _updateSaturation(double value) {
     setState(() {
       saturation = value;
-
-      // Update the selected color while preserving hue and brightness
-      selectedColor = HSVColor.fromAHSV(
-        1,
-        hue, // Use the stored hue value
-        saturation,
-        brightness,
-      ).toColor();
+      selectedColor =
+          HSVColor.fromAHSV(1, hue, saturation, brightness).toColor();
+      widget.onColorChanged(
+          selectedColor); // Notify the parent of the color change
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min, // Ensure the column takes minimum space
+      mainAxisSize: MainAxisSize.min,
       children: [
         CurvedSlider(
           startAngle: -pi,

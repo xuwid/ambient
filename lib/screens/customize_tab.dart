@@ -19,6 +19,10 @@ class _CustomizeTabState extends State<CustomizeTab> {
 
   @override
   Widget build(BuildContext context) {
+    // Extract HSV values from the selected LED's color
+    final selectedColor = _ledColors[_selectedLedIndex];
+    final hsvColor = HSVColor.fromColor(selectedColor);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -82,20 +86,22 @@ class _CustomizeTabState extends State<CustomizeTab> {
                         child: Row(
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.arrow_back,
-                                  color: Colors.white),
+                              icon: const Icon(Icons.arrow_back_ios,
+                                  color: Colors.grey),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
                             ),
                             const SizedBox(width: 3),
                             Expanded(
-                              child: Text(
-                                titleText,
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                              child: Center(
+                                child: Text(
+                                  titleText,
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
@@ -182,18 +188,25 @@ class _CustomizeTabState extends State<CustomizeTab> {
                     }),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
+                const StartingLightWidget(
+                  title: '',
+                  initialValue: 12,
+                ),
                 // Color Picker for the selected LED
                 Expanded(
                   child: Center(
                     child: ColorPicker(
                       size: 225,
-                      //     initialColor: _ledColors[_selectedLedIndex],
-                      //   onColorChanged: (color) {
-                      // setState(() {
-                      //     _ledColors[_selectedLedIndex] = color;
-                      // });
-                      //},
+                      initialColor: selectedColor,
+                      // initialHue: hsvColor.hue,
+                      //initialSaturation: hsvColor.saturation,
+                      //initialBrightness: hsvColor.value,
+                      onColorChanged: (color) {
+                        setState(() {
+                          _ledColors[_selectedLedIndex] = color;
+                        });
+                      },
                     ),
                   ),
                 ),
